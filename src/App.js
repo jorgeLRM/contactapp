@@ -10,6 +10,15 @@ function App() {
   const modalRef = useRef();
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [file, setFile] = useState(undefined);
+  const [values, setValues] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    title: '',
+    status: ''
+  });
 
   const getAllContacts = async (page = 0, size = 10) => {
     try {
@@ -20,6 +29,10 @@ function App() {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const onChange = (event) => {
+    setValues({ ...values, [event.target.name]: event.target.value });
   };
 
   const toggleModal = (show) => {
@@ -63,27 +76,27 @@ function App() {
             <div className="user-details">
               <div className="input-box">
                 <span className="details">Name</span>
-                <input type="text" name="name" required />
+                <input type="text" value={values.name} onChange={onChange} name="name" required />
               </div>
               <div className="input-box">
                 <span className="details">Email</span>
-                <input type="text" name="email" required />
+                <input type="text" value={values.email} onChange={onChange} name="email" required />
               </div>
               <div className="input-box">
                 <span className="details">Title</span>
-                <input type="text" name="title" required />
+                <input type="text" value={values.title} onChange={onChange} name="title" required />
               </div>
               <div className="input-box">
                 <span className="details">Phone Number</span>
-                <input type="text" name="phone" required />
+                <input type="text" value={values.phone} onChange={onChange} name="phone" required />
               </div>
               <div className="input-box">
                 <span className="details">Address</span>
-                <input type="text" name="address" required />
+                <input type="text" value={values.address} onChange={onChange} name="address" required />
               </div>
               <div className="input-box">
                 <span className="details">Account Status</span>
-                <input type="text" name="status" required />
+                <input type="text" value={values.status} onChange={onChange} name="status" required />
               </div>
               <div className="file-input">
                 <span className="details">Profile Photo</span>
