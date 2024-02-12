@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import "./App.css";
 import Header from "./components/Header";
-import { getContact, getContacts } from "./api/ContactService";
+import { getContact, getContacts, saveContact, updatePhoto } from "./api/ContactService";
 import { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import ContactList from "./components/ContactList";
@@ -37,7 +37,33 @@ function App() {
     setValues({ ...values, [event.target.name]: event.target.value });
   };
 
-  const toggleModal = (show) => {
+  const handleNewContact = async (event) => {
+    event.preventDefault();
+    try {
+      const {data} = await saveContact(values);
+      const formData = new FormData();
+      formData.append('file', file, file.name);
+      formData.append('id', data.id);
+      const {data: photoUrl} = await updatePhoto(formData);
+      toggleModal(false);
+      console.log(photoUrl);
+      setFile(undefined);
+      fileRef.current.value = null;
+      setValues({
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+        title: '',
+        status: ''
+      })
+      getAllContacts();
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
+  const toggleModal = show => {
     show ? modalRef.current.showModal() : modalRef.current.close();
   };
 
@@ -74,7 +100,7 @@ function App() {
         </div>
         <div className="divider"></div>
         <div className="modal__body">
-          <form>
+          <form onSubmit={handleNewContact}>
             <div className="user-details">
               <div className="input-box">
                 <span className="details">Name</span>
