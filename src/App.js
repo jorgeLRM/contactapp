@@ -1,10 +1,11 @@
 import { useRef, useState } from "react";
 import "./App.css";
 import Header from "./components/Header";
-import { getContact, getContacts, saveContact, updatePhoto } from "./api/ContactService";
+import { getContacts, saveContact, updateContact, updatePhoto } from "./api/ContactService";
 import { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import ContactList from "./components/ContactList";
+import ContactDetail from "./components/ContactDetail";
 
 function App() {
   const modalRef = useRef();
@@ -46,7 +47,6 @@ function App() {
       formData.append('id', data.id);
       const {data: photoUrl} = await updatePhoto(formData);
       toggleModal(false);
-      console.log(photoUrl);
       setFile(undefined);
       fileRef.current.value = null;
       setValues({
@@ -62,6 +62,10 @@ function App() {
       console.log(error);
     }
   }
+
+  const updateContact = async () => {};
+
+  const updateImage = async () => {};
 
   const toggleModal = show => {
     show ? modalRef.current.showModal() : modalRef.current.close();
@@ -85,6 +89,15 @@ function App() {
                   data={data}
                   currentPage={currentPage}
                   getAllContacts={getAllContacts}
+                />
+              }
+            />
+            <Route
+              path="/contacts/:id"
+              element={
+                <ContactDetail
+                  updateContact={updateContact}
+                  updateImage={updateImage}
                 />
               }
             />
