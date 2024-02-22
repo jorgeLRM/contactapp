@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getContact } from "../api/ContactService";
+import { Link } from "react-router-dom/dist";
 
 const ContactDetail = ({ updateContact, updateImage }) => {
+  const inputRef = useRef();
   const [contact, setContact] = useState({
     name: "",
     email: "",
@@ -19,6 +21,26 @@ const ContactDetail = ({ updateContact, updateImage }) => {
       const { data } = await getContact(id);
       setContact(data);
       console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const selectImage = () => {
+    inputRef.current.click();
+  };
+
+  const updatePhoto = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file, file.name);
+      formData.append("id", id);
+      await updateImage(formData);
+      setContact((prev) => ({
+        ...prev,
+        photoUrl: `${prev.photoUrl}?updated_at=${new Date().getTime()}`,
+      }));
+      console.log("data");
     } catch (error) {
       console.log(error);
     }
@@ -41,13 +63,23 @@ const ContactDetail = ({ updateContact, updateImage }) => {
           <div className="profile__metadata">
             <p className="profile__name">{contact.name}</p>
             <p className="profile__muted">JPG, GIF, or PNG. Max size of 10MG</p>
-            <button className="btn">
+            <button onClick={selectImage} className="btn">
               <i className="bi bi-cloud-upload"></i> Change Photo
             </button>
           </div>
         </div>
         <div className="profile__settings"> Settings will go here</div>
       </div>
+
+      <form style={{ display: "none" }}>
+        <input
+          type="file"
+          ref={inputRef}
+          onChange={(event) => updatePhoto(event.target.files[0])}
+          name="file"
+          accept="image/*"
+        />
+      </form>
     </>
   );
 };
